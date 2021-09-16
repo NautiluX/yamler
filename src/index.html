@@ -1,0 +1,32 @@
+<div id="editor">some text</div>
+<script src="ace/src-min/ace.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace/src-min/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
+<script src="ace/src-min/mode-yaml.js" type="text/javascript" charset="utf-8"></script>
+
+<html>
+  <body>
+    <body>
+</html>
+
+<script>
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/twilight");
+  var YamlMode = ace.require("ace/mode/yaml").Mode;
+  editor.session.setMode(new YamlMode());
+
+  var content = location.hash.substr(1);
+  if (content != "") {
+    editor.session.setValue(atob(content));
+  }
+  editor.getSession().on('change', function() {
+    location.hash="#"+btoa(editor.getSession().getValue())
+  });
+</script>
+
+<style type="text/css">
+.ace_editor {
+  width: 100%;
+  height: 100%;
+  font-size: 13pt;
+}
+</style>
