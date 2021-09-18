@@ -3,6 +3,9 @@
 <script src="ace/src-min/theme-twilight.js" type="text/javascript" charset="utf-8"></script>
 <script src="ace/src-min/mode-yaml.js" type="text/javascript" charset="utf-8"></script>
 
+<script src="https://unpkg.com/fflate"></script>
+
+
 <html>
   <body>
     <body>
@@ -15,11 +18,22 @@
   editor.session.setMode(new YamlMode());
 
   var content = location.hash.substr(1);
-  if (content != "") {
-    editor.session.setValue(atob(content));
+    if (content != "") {
+      compressedString = atob(content);
+      const decompressed = fflate.decompressSync(
+        fflate.strToU8(compressedString, true)
+      );
+      const origText = fflate.strFromU8(decompressed);
+    editor.session.setValue(origText);
   }
   editor.getSession().on('change', function() {
-    location.hash="#"+btoa(editor.getSession().getValue())
+    const buf = fflate.strToU8(editor.getSession().getValue());
+
+    const compressedString = fflate.strFromU8(
+      fflate.compressSync(buf),
+      true
+    );
+    location.hash="#"+btoa(compressedString);
   });
 </script>
 
